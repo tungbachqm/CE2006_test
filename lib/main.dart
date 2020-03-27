@@ -6,18 +6,29 @@ import 'package:flutter/material.dart';
 import "package:charts_flutter/flutter.dart" as charts;
 import 'package:flutterapp/GraphDataList.dart';
 import "GraphData.dart";
-
+import "package:cloud_firestore/cloud_firestore.dart";
+import "server/AccessDatabase.dart";
 void main() => runApp(MaterialApp(
   home: TestApp(),
 ));
 
 
-class TestApp extends StatelessWidget {
+class TestApp extends StatefulWidget{
+  @override
+  _TestApp createState() => _TestApp();
+}
+class _TestApp extends State<TestApp> {
   // variable
-  var checkpointLive = ["Live", "Tuas", "WoodLand"];
-  var checkpointPrediction = ["Prediction", "Tuas", "WoodLand"];
+  var options = ["Live", "Prediction"];
+  var checkpoints = ["Tuas", "WoodLand"];
   String live = "1";
   String predict = "2";
+  String current_option = "Live";
+  String current_checkpoint = "Tuas";
+  AccessDataBase test = new AccessDataBase();
+
+  final CollectionReference live_data = Firestore.instance.collection("livetraffic1");
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,15 +36,13 @@ class TestApp extends StatelessWidget {
           title: Text('Welcome to Flutter'),
         ),
         body: Center(
-
-
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
 
               DropdownButton(
 
-                items: checkpointLive.map((String dropDownStringItem){
+                items: options.map((String dropDownStringItem){
                   return DropdownMenuItem<String>(
                     value: dropDownStringItem,
                     child: Text(dropDownStringItem),
@@ -41,17 +50,18 @@ class TestApp extends StatelessWidget {
                   );
                 }).toList(),
                 onChanged: (String text){
-                    if (text != "Live") {
-                      callRoutine(context, "Second", text);
-                    }
+                    //print(live_data);
+                    setState(() {
+                      current_option = text;
+                    });
                 },
                 focusColor: Color.fromRGBO(0, 0, 255, 1),
                 iconDisabledColor: Color.fromRGBO(0, 0, 0, 1),
-                value: checkpointLive[0],
+                value: current_option,
               ),
               DropdownButton(
 
-                items: checkpointPrediction.map((String dropDownStringItem){
+                items: checkpoints.map((String dropDownStringItem){
                   return DropdownMenuItem<String>(
                     value: dropDownStringItem,
                     child: Text(dropDownStringItem),
@@ -59,24 +69,35 @@ class TestApp extends StatelessWidget {
                   );
                 }).toList(),
                 onChanged: (String text){
-                  if (text != "Prediction") {
-                    callRoutine(context, "Second", text);
-                  }
+                    setState(() {
+                      current_checkpoint = text;
+                    });
                 },
                 focusColor: Color.fromRGBO(0, 0, 255, 1),
                 iconDisabledColor: Color.fromRGBO(0, 0, 0, 1),
-                value: checkpointPrediction[0],
+                value: current_checkpoint,
               ),
-
-
+              FlatButton(
+                onPressed: (){
+                  test.getData();
+                  callRoutine(context, current_option, current_checkpoint);
+                },
+                child: Text("Start"),
+              )
             ],
           ),
         ),
+
+
     );
+
   }
   void callRoutine(BuildContext context, String routineName, String text){
-    if (routineName == "Second"){
+    if (routineName == "Live"){
       Navigator.push(context, MaterialPageRoute(builder: (context) => second_routine(checkpoint: text) ));
+    }
+    if (routineName == "Prediction"){
+      Navigator.push(context, MaterialPageRoute(builder: (context) => PredictionScreen()));
     }
 
   }
@@ -161,5 +182,95 @@ class _third_routine extends State<third_routine>{
       ) ,
 
     );
+  }
+}
+
+
+class PredictionScreen extends StatefulWidget{
+  @override
+  _PredictionScreen createState() => _PredictionScreen();
+}
+class _PredictionScreen extends State<PredictionScreen>{
+  // variable
+
+  var days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  var hour = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"];
+  var hour_type =["AM", "PM"];
+
+  String current_day = "Mon";
+  String current_hour = "1";
+  String current_h_type = "AM";
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Welcome to Flutter'),
+      ),
+      body: Center(
+
+
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+
+            DropdownButton(
+
+              items: days.map((String dropDownStringItem){
+                return DropdownMenuItem<String>(
+                  value: dropDownStringItem,
+                  child: Text(dropDownStringItem),
+
+                );
+              }).toList(),
+              onChanged: (String newValue) {
+                setState((){
+                  current_day = newValue;
+                });
+              },
+              focusColor: Color.fromRGBO(0, 0, 255, 1),
+              iconDisabledColor: Color.fromRGBO(0, 0, 0, 1),
+              value: current_day,
+            ),
+            DropdownButton(
+              items: hour.map((String dropDownStringItem){
+                return DropdownMenuItem<String>(
+                  value: dropDownStringItem,
+                  child: Text(dropDownStringItem),
+
+                );
+              }).toList(),
+              onChanged: (newValue){
+                setState(() {
+                  current_hour = newValue;
+                });
+              },
+              focusColor: Color.fromRGBO(0, 0, 255, 1),
+              iconDisabledColor: Color.fromRGBO(0, 0, 0, 1),
+              value: current_hour,
+            ),
+            DropdownButton(
+              items: hour_type.map((String dropDownStringItem){
+                return DropdownMenuItem<String>(
+                value: dropDownStringItem,
+                child: Text(dropDownStringItem),
+                );
+              }).toList(),
+              onChanged: (newValue){
+                setState(() {
+                    current_h_type = newValue;
+                });
+              },
+              value: current_h_type,
+            )
+          ],
+        ),
+      ),
+    );
+  }
+  void callRoutine(BuildContext context, String routineName, String text){
+    if (routineName == "Second"){
+      Navigator.push(context, MaterialPageRoute(builder: (context) => second_routine(checkpoint: text) ));
+    }
+
   }
 }
