@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutterapp/GraphData.dart';
+import 'package:flutterapp/Prediction/GraphData.dart';
 import "package:charts_flutter/flutter.dart" as charts;
 class GraphDataList extends StatelessWidget{
   final List<GraphData> data;
@@ -14,7 +14,7 @@ class GraphDataList extends StatelessWidget{
       charts.Series(
         id: "Test",
         data: data,
-        domainFn: (GraphData series, _) => series.year,
+        domainFn: (GraphData series, _) => series.time,
         measureFn: (GraphData series, _) => series.number,
         colorFn: (GraphData series, _) => series.barColor
       )];
