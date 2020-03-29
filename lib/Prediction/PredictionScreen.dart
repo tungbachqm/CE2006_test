@@ -1,18 +1,23 @@
 import 'package:flutter/material.dart';
 import "package:charts_flutter/flutter.dart" as charts;
-import 'package:flutterapp/Prediction/GraphDataList.dart';
-import "GraphData.dart";
-import "Server/AccessDatabase.dart";
-import "BarChartPresenting.dart";
+import 'package:flutterapp/Prediction/PredictionSpecificHourpage.dart';
+import 'package:flutterapp/Prediction/predictionweekpage.dart';
+
 
 class PredictionScreen extends StatefulWidget{
   @override
-  _PredictionScreen createState() => _PredictionScreen();
+  _PredictionScreen createState() => _PredictionScreen(checkpoint: checkpoint);
+
+  String checkpoint;
+  PredictionScreen({
+    this.checkpoint,
+  });
 }
 
 
 class _PredictionScreen extends State<PredictionScreen>{
   // variable
+
 
   var days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
   var hour = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"];
@@ -21,13 +26,17 @@ class _PredictionScreen extends State<PredictionScreen>{
   String current_day = "Mon";
   String current_hour = "1";
   String current_h_type = "AM";
+  String checkpoint;
 
-  AccessDataBase test = new AccessDataBase();
+  //var now = new DateTime.now();
 
   final TopSection = new Container(
     child: Text("Please enter your choice"),
   );
 
+  _PredictionScreen({
+    this.checkpoint,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -99,13 +108,14 @@ class _PredictionScreen extends State<PredictionScreen>{
               child: Column(
                 children: <Widget>[
                   FlatButton(
-                    onPressed: (){},
+                    onPressed: (){
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => PredictionHour()));
+                    },
                     child: Text("Prediction with specific hour")
                   ),
                   FlatButton(
                     onPressed: (){
-                      test.getData();
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => BarChartShow()));
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => PredictionWeekPage()));
                     },
                     child: Text("Prediction for all day"),
                   )

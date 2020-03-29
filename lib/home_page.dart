@@ -106,7 +106,7 @@ class _HomePage extends State<HomePage>{
       Navigator.push(context, MaterialPageRoute(builder: (context) => LiveScreen(checkpoint: text) ));
     }
     if (routineName == "Prediction"){
-      Navigator.push(context, MaterialPageRoute(builder: (context) => PredictionScreen()));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => PredictionScreen(checkpoint: text)));
     }
 
   }

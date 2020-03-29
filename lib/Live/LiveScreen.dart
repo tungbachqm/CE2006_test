@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutterapp/Live/LiveInfoPresent.dart';
 
 
 class LiveScreen extends StatelessWidget{
@@ -19,12 +20,28 @@ class LiveScreen extends StatelessWidget{
           child: Text ("press this to come back"),
         ),
         body: Center(
-            /*child: FlatButton(
+            child: FlatButton(
               onPressed: (){
-                Navigator.push(context, MaterialPageRoute(builder: (context) => third_routine()));
+                print(getDocID());
+                Navigator.push(context, MaterialPageRoute(builder: (context) => LiveInfoShow(time_stamp: getDocID())));
               },
-            )*/
+            )
         )
     );
+  }
+
+  String getDocID(){
+    String ans;
+    String now = DateTime.now().toString();
+    int final_min;
+    if (int.parse(now[15]) > 5 ){
+      final_min = 5;
+    }
+    else{
+      final_min = 0;
+    }
+    ans = checkpoint.substring(0,1) + now.substring(0,15) + final_min.toString() + ":00";
+    print(ans);
+    return ans;
   }
 }
